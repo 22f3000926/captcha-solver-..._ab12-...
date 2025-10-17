@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Quiz about India</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 400px; margin: 2em auto; padding: 0 1em; background: #f9f9f9; }
+        h1 { text-align: center; }
+        .question { margin-bottom: 1em; }
+        .answers label { display: block; margin-bottom: 0.5em; cursor: pointer; }
+        button { padding: 0.5em 1em; font-size: 1em; cursor: pointer; }
+        .score { font-weight: bold; margin-top: 1em; text-align: center; }
+    </style>
+</head>
+<body>
+    <h1>India Quiz</h1>
+    <div id="quiz-container">
+        <div id="question-container"></div>
+        <button id="next-btn">Next</button>
+    </div>
+    <div id="result" class="score"></div>
+
+<script>
+const quizData = [
+    {
+        question: "What is the capital of India?",
+        answers: ["Mumbai", "New Delhi", "Bangalore", "Chennai"],
+        correct: 1
+    },
+    {
+        question: "Which river is considered the holiest in India?",
+        answers: ["Ganges", "Yamuna", "Brahmaputra", "Cauvery"],
+        correct: 0
+    },
+    {
+        question: "India's national animal is?",
+        answers: ["Lion", "Peacock", "Tiger", "Elephant"],
+        correct: 2
+    }
+];
+
+const questionContainer = document.getElementById('question-container');
+const nextBtn = document.getElementById('next-btn');
+const resultDiv = document.getElementById('result');
+
+let currentQuestionIndex = 0;
+let score = 0;
+
+function loadQuestion() {
+    const currentQ = quizData[currentQuestionIndex];
+    questionContainer.innerHTML = '';
+    resultDiv.textContent = '';
+
+    // Question text
+    const qElem = document.createElement('div');
+    qElem.classList.add('question');
+    qElem.textContent = currentQ.question;
+    questionContainer.appendChild(qElem);
+
+    // Answers
+    const answersDiv = document.createElement('div');
+    answersDiv.classList.add('answers');
+
+    currentQ.answers.forEach((answerText, i) => {
+        const label = document.createElement('label');
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'answer';
+        radio.value = i;
+
+        label.appendChild(radio);
+        label.appendChild(document.createTextNode(answerText));
+
+        answersDiv.appendChild(label);
+    });
+
+    questionContainer.appendChild(answersDiv);
+
+    // Change button text if last question
+    nextBtn.textContent = (currentQuestionIndex === quizData.length - 1) ? 'Submit' : 'Next';
+}
+
+function getSelectedAnswer() {
+    const radios = document.getElementsByName('answer');
+    for(const radio of radios) {
+        if (radio.checked) return Number(radio.value);
+    }
+    return null;
+}
+
+nextBtn.addEventListener('click', () => {
+    const selected = getSelectedAnswer();
+    if (selected === null) {
+        alert('Please select an answer before proceeding.');
+        return;
+    }
+
+    if (selected === quizData[currentQuestionIndex].correct) {
+        score++;
+    }
+
+    currentQuestionIndex++;
+
+    if (currentQuestionIndex < quizData.length) {
+        loadQuestion();
+    } else {
+        questionContainer.innerHTML = '';
+        nextBtn.style.display = 'none';
+        resultDiv.textContent = `You scored ${score} out of ${quizData.length}!`;
+    }
+});
+
+// Initial load
+loadQuestion();
+</script>
+</body>
+</html>
